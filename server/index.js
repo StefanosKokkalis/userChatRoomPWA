@@ -23,6 +23,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 
 // INITIALIZE AUTH
+var user_obj = {};
 const options = {
     host: 'localhost',
     user: 'root',
@@ -133,22 +134,63 @@ app.set('view engine', 'hbs');
 //AUTH: WHENEVER CLIENT ENTERS THE APP
 app.get('/',authenicationMiddleware(), function(req,res) {
     console.log('user authenticated: ' + req.isAuthenticated());
-    if(req.isAuthenticated()){
-        res.render('room', {
-            username: req.session.passport.user.userName
-        });    
+    if(req.isAuthenticated() === true){
+        console.log("FUCKING TRUE");
+        db.query('SELECT * FROM profile_options WHERE user_id = ?', [req.session.passport.user.user_id], (error, results, fields) => {  
+            if (error) throw error;
+
+            console.log(results);
+            res.render('room', {
+                username: req.session.passport.user.userName,
+                nameColor: results[0].name_color,
+                msgColor: results[0].message_color
+            });    
+        });
+
     }
     
 });
 
 //AUTH: WHENEVER CLIENT ENTERS PROFILE
 app.get('/profile', authenicationMiddleware(), function(req, res, next) {
-    if( req.isAuthenticated() ){
-        res.render('profile',{
-            currentUser : req.session.passport.user.userName
-        });      
+    console.log("user auth: " + req.isAuthenticated());
+    if( req.isAuthenticated() === true ){
+        console.log(req.session.passport.user);
+        db.query('SELECT id FROM users WHERE username = ?', [req.session.passport.user.userName], (error, results, fields) => {
+            if (error) throw error;
+            req.session.passport.user.user_id = results[0].id;
+            console.log("passport user: ",req.session.passport.user);
+            db.query('SELECT * FROM profile_options WHERE user_id = ?', [results[0].id], (error, results2, fields) => {  
+                if (error) throw error;
+
+                console.log(results2);
+                
+                
+                res.render('profile',{
+                    currentUser: req.session.passport.user.userName,
+                    nameColor: results2[0].name_color,
+                    msgColor: results2[0].message_color
+                }); 
+            });
+        });
+             
     }
-   
+});
+
+app.post('/profile', authenicationMiddleware(), function(req, res, next) {
+    if( req.isAuthenticated() === true ){
+        var nameColor = req.body.nameColor;
+        var msgColor = req.body.msgColor;
+        var userId = req.session.passport.user.user_id;
+        db.query('UPDATE profile_options SET name_color = "' + nameColor + '", message_color = "' + msgColor + '" WHERE user_id = "'+userId+'" ', (error, results, fields) => {  
+            if (error) throw error;
+            res.render('profile',{
+                currentUser : req.session.passport.user.userName,
+                nameColor: nameColor,
+                msgColor: msgColor
+            });      
+        });
+    }
 });
 
 //AUTH: WHENEVER CLIENT ENTERS LOGIN
@@ -224,13 +266,16 @@ app.post('/register',function (req, res) {
                 db.query('SELECT LAST_INSERT_ID() as user_id', (error, results, fields) => {
                     if(error) throw error;
                     
-                    const user_id = results[0];
+                    user_obj = results[0];
                     
-                    //create new user session with passportJS
-                    res.render('register', {
-                        title: 'Registration Complete',
-                        formVisible: 'hidden'
-                    });    
+                    db.query('INSERT INTO profile_options (user_id, name_color, message_color) VALUES (?, ?, ?)', [user_obj.user_id, "#000", "#000"], (error, results, fields) => {    
+                        if (error) throw error;
+                        //create new user session with passportJS
+                        res.render('register', {
+                            title: 'Registration Complete',
+                            formVisible: 'hidden'
+                        });    
+                    });
                 });
             });
         });   

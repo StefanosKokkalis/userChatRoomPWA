@@ -2,7 +2,9 @@
 
 {{#if isAuthenticated}}
     <div hidden id="userName">{{username}}</div>
-    <main class="p-2">
+    <div hidden id='nameColor'>{{nameColor}}</div>
+    <div hidden id='msgColor'>{{msgColor}}</div>
+    <main class="p-2" style='margin-top:60px;'>
         <div id="messages" class="container-fluid">
             <div id="loader" class="text-center text-light" style="margin-top:10rem;">
                 <i class="fas fa-spinner fa-2x fa-pulse"></i>
@@ -52,10 +54,12 @@
         if( 'mediaDevices' in navigator ){
             
             var username = $('#userName').text();
+            var nameColor = $('#nameColor').text();
+            var msgColor = $('#msgColor').text();
 //            console.log("username",username);
             
             //call init() from main.js
-            _init(username);
+            _init(username, nameColor, msgColor);
             
             // Register SW if supported
             if( 'serviceWorker' in navigator ){
@@ -82,14 +86,12 @@
 /*            display:none !important;*/
         }
         .names{
-            color: #5d5d5d!important;
             font-weight: 900;
             text-align:left;
             width: 100%;
             margin: 0px 20px;
         }
         .messages{
-            color: #5d5d5d;
             text-align: left;
             width: 100%;
             margin: 0px 20px;

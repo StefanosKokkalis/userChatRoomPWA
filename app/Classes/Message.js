@@ -39,13 +39,15 @@ class Message {
     }
     
     //Add a new message
-    add(user_name, data_url, caption_text) {
+    add(user_name, data_url, caption_text, name_color, msgColor) {
         
         //create message obj
         let message = {
             username: user_name,
             photo : data_url,
-            caption : caption_text
+            caption : caption_text,
+            nameColor: name_color,
+            msgColor: msgColor
         }
         
          // add to local messages

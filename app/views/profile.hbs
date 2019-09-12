@@ -2,4 +2,18 @@
 
 <div class='container'>
     <h2>Welcome {{currentUser}}</h2>
+
+    <div>
+        <h4>Chat Options</h4>
+        <form id='profileForm' method="POST" action='/profile'>
+            <label for='nameColor'>Name Color</label>
+            <input id='nameColor' name='nameColor'  class='form-control' value='{{nameColor}}'  type='color'>
+            <label for='msgColor'>Message Color</label>
+            <input id='msgColor' name='msgColor'  class='form-control' value='{{msgColor}}' type='color'>
+            <button type='submit' class='btn btn-light'>Save</button>
+        </form>
+
+    </div>
 </div>
+<script>
+</script>

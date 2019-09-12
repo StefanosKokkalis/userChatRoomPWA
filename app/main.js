@@ -3,10 +3,8 @@ const camera = new Camera( $("#player")[0] );
 
 
 // Main app logic
-const _init = (userName) => {
+const _init = (userName, nameColor, msgColor) => {
     console.log("App running");
-    
-    const username = userName;
     
     // Init new message instance
     const messages = new Message();
@@ -64,6 +62,7 @@ const _init = (userName) => {
         //Get caption text
         let caption = $("#caption").val();
         
+        
         //Check message if ok
         if(!camera.photo || !caption) {
             
@@ -73,7 +72,7 @@ const _init = (userName) => {
         }
         
         
-        let message = messages.add (username, camera.photo, caption);
+        let message = messages.add (userName, camera.photo, caption, nameColor, msgColor);
         
         console.log(messages.all);
         
@@ -99,10 +98,10 @@ const renderMessage = (message) => {
                         </div>
                         <div class="col-10 p-1">
                             <div class='row'>
-                            <p class='names'>${message.username}</p>
+                            <p class='names' style='color:${message.nameColor}'>${message.username}</p>
                             </div>
                             <div class='row'>
-                            <p class='messages'>${message.caption}</p>
+                            <p class='messages' style='color:${message.msgColor}'>${message.caption}</p>
                             </div>
                         </div>
                     </div>`;

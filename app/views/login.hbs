@@ -2,7 +2,19 @@
 
 
 <div class='container'>
-    {{#if isAuthenticated}}
+    {{#if isAuthenticated}}   
+       <h2>You're already logged in</h2>
+<!--
+        <p style='color:white;'>Redirecting</p>
+        
+        <script>
+        setTimeout(function () {
+            window.location = "/profile";
+        }, 2000);
+        </script>
+-->
+    {{else}}
+ 
         <h2>{{title}}</h2>
         <form id='loginForm' method="POST" action='/login' {{formVisible}}>
              <div class="form-group">
@@ -15,17 +27,7 @@
             </div>
             <button type='submit' class='btn btn-light'>Submit</button>
         </form> 
-
-    {{else}}
-        <h2>You're already logged in</h2>
-        <p style='color:white;'>Redirecting</p>
-        
-        <script>
-        setTimeout(function () {
-            // after 2 seconds
-            window.location = "/profile";
-        }, 2000);
-        </script>
+    
     {{/if}}
 </div>
     
