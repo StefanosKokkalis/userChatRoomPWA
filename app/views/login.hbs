@@ -1,0 +1,51 @@
+{{> header}}
+
+
+<div class='container'>
+    {{#if isAuthenticated}}
+        <h2>{{title}}</h2>
+        <form id='loginForm' method="POST" action='/login' {{formVisible}}>
+             <div class="form-group">
+                <label for="username">Username</label>
+                <input type='text' class='form-control' name='username' placeholder='Username'>
+            </div>
+             <div class="form-group">
+                <label for="password">Password</label>
+                <input type='password' class='form-control' name='password' placeholder='Password'>
+            </div>
+            <button type='submit' class='btn btn-light'>Submit</button>
+        </form> 
+
+    {{else}}
+        <h2>You're already logged in</h2>
+        <p style='color:white;'>Redirecting</p>
+        
+        <script>
+        setTimeout(function () {
+            // after 2 seconds
+            window.location = "/profile";
+        }, 2000);
+        </script>
+    {{/if}}
+</div>
+    
+<script>
+ // Check Compatibility 
+        if( 'mediaDevices' in navigator ){
+        
+            
+            // Register SW if supported
+            if( 'serviceWorker' in navigator ){
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js');
+                });
+            }
+            
+        } else {
+            console.log("error");
+            // Show Notification
+            toastr.error( null, "This App is not supported by your browser.", {timeout: 3000});
+          
+        }
+</script>
+

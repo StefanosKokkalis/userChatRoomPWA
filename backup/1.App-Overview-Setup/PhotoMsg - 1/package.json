@@ -1,0 +1,16 @@
+{
+  "name": "PhotoMsg",
+  "version": "1.0.0",
+  "description": "Simple photo-caption PWA",
+  "main": "server/",
+  "author": "Ray Viljoen <ray@stackacademy.tv>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server/"
+  },
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "express": "^4.16.3",
+    "jquery": "^3.3.1"
+  }
+}

@@ -1,0 +1,90 @@
+<html>
+<head>
+    <title>Photo Message</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#19A2B8">
+    <meta http-equiv="cache-control" content="private, max-age=0, no-cache">
+    <link rel="icon" href="/icons/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+    <style>
+        #toast-container {
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        #toast-container > div {
+            opacity: 1;
+            box-shadow: 0 0 2rem rgba(0,0,0,0.75);
+            border-radius: 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        #camera.withphoto{
+            color: transparent !important;
+            background-size: cover;
+        }
+        h1,h2,h3,h4,h5,label,p {
+            color:white;
+        }
+        .container{
+            padding-top:80px;
+        }
+        .navbar{
+            background-color: #5a8d8f !important;
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script src="/modules/jquery/dist/jquery.min.js"></script>
+    <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/modules/toastr/build/toastr.min.js"></script>
+ </head>
+ <!-- App Shell -->
+ <body class="bg-info">
+     
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      <a class="navbar-brand" href="/">
+          <img src='../icons/icon-128x128.png' width='40' />
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+            {{#if isAuthenticated}}
+              <li class="nav-item">
+                <a class="nav-link" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            {{else}}
+              <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+              </li> 
+            {{/if}}
+        </ul>
+      </div>
+    </nav>
+    <script>
+        // Dynamically change .nav > a active class on view rendering
+        $(document).ready(function () {
+            const pageURL = '/' + $(location).attr("href").split("/").pop();
+            console.log(pageURL);
+            $('.active').removeClass('active');
+            $('a[href$="'+ pageURL +'"]').parent().addClass('active');
+        });
+    </script>

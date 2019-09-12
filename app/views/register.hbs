@@ -1,0 +1,76 @@
+
+{{> header}}
+        
+        <div class="container">
+        <h1>{{title}}</h1>    
+        <h5 style='color:#b93b3b;'>
+            {{subTitle}}
+        </h5>
+        <!--passing error messages from backend using hsb-->
+        <div id='hiddenErrors' hidden>
+        {{#if errors}}
+            {{#each errors}}
+                <p class='errorMsg'>
+                   {{this.msg}} 
+                <p/>
+            {{/each}}
+        {{/if}}
+        </div>
+            
+        <form id='registerForm' method="POST" action='/register' {{formVisible}}>
+             <div class="form-group">
+                <label for="username">Username</label>
+                <input type='text' class='form-control' name='username' placeholder='Username'>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type='email' class='form-control' name='email' placeholder='Email'>
+            </div>
+             <div class="form-group">
+                <label for="password">Password</label>
+                <input type='password' class='form-control' name='password' placeholder='Password'>
+            </div>
+            <div class="form-group">
+                <label for="passwordMatch">Re-Enter Password</label>
+                <input type='password' class='form-control' name='passwordMatch' placeholder='Password'>
+            </div>
+            <button type='submit' class='btn btn-light'>Submit</button>
+        </form> 
+            
+        <div id='redirect' style='display:none;color:white;'><p>Redirecting</p></div>
+    </div>
+
+<!--
+    <script src="/modules/jquery/dist/jquery.min.js"></script>
+    <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/modules/toastr/build/toastr.min.js"></script>
+-->
+    <script>
+        $(document).ready(function(){
+            console.log("register page rendered");
+            //Detect if there are any errors and display them in a toastr
+            var count = $("#hiddenErrors").find("p").length;
+            console.log("error messages:" + count);
+            if ( count > 0 ) {
+                $('.errorMsg').each(function(i, obj){
+                    var errorMessage = $(this).html();
+                    toastr.error( null, errorMessage, {timeout: 3000});
+                });
+            }
+            
+            //Detect if form is hidden => redirect('/')
+            if($("#registerForm").is(":hidden")){
+                console.log('hidden');
+                $('#redirect').show();
+                setTimeout(function () {
+                    // after 2 seconds
+                    window.location = "/";
+                }, 2000);
+            }
+        });
+    </script>
+
+{{> footer}}
+<!--
+    </body>
+</html>-->

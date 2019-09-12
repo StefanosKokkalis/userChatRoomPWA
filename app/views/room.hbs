@@ -1,0 +1,98 @@
+{{> header}}
+
+{{#if isAuthenticated}}
+    <div hidden id="userName">{{username}}</div>
+    <main class="p-2">
+        <div id="messages" class="container-fluid">
+            <div id="loader" class="text-center text-light" style="margin-top:10rem;">
+                <i class="fas fa-spinner fa-2x fa-pulse"></i>
+                <p>loading messages</p>
+            </div>
+        </div>
+    </main>
+    
+    <div class="container-fluid fixed-bottom">
+        <div id="toolbar" class="row bg-dark">
+            <div class="col p-2 d-flex">
+                <button id="camera" data-toggle="modal" data-target="#viewfinder" class="fas fa-camera fa-lg px-3 mr-2 text-light border-light bg-dark rounded-circle"></button>
+                <textarea id="caption" placeholder="Image Caption..." maxlength="120" class="flex-grow-1 w-100 rounded border-light align-middle pr-5" style="resize:none;"></textarea>
+                <a id="send" style="right:1.25rem;bottom:1.25rem; padding:0.5rem;" class="fas fa-paper-plane fa-lg position-absolute text-dark"></a>
+            </div>
+        </div>
+    </div>
+    <div id="viewfinder" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog fixed-bottom" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-body p-1 text-center">
+                    <video id="player" autoplay class="w-100 rounded"></video>
+                    <button data-dismiss="modal" type="button" id="shutter" class="fas fa-circle fa-3x rounded-circle bg-white text-danger p-1 my-2"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="modal fade" id="photoframe" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-1">
+                    <img src="" class="w-100 rounded" data-dismiss="modal">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/Classes/Camera.js"></script>
+    <script src="/Classes/Message.js"></script>
+    <script src="/main.js"></script>
+    
+     <!-- Init App if Supported -->
+    <script>
+        // Check Compatibility 
+        if( 'mediaDevices' in navigator ){
+            
+            var username = $('#userName').text();
+//            console.log("username",username);
+            
+            //call init() from main.js
+            _init(username);
+            
+            // Register SW if supported
+            if( 'serviceWorker' in navigator ){
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js');
+                });
+            }
+            
+        } else {
+            console.log("error");
+            // Show Notification
+            toastr.error( null, "This App is not supported by your browser.", {timeout: 3000});
+          
+        }
+    </script>
+
+{{else}}
+    <script>
+        window.location.replace('/login');
+    </script>
+{{/if}}
+    <style>
+        nav{
+/*            display:none !important;*/
+        }
+        .names{
+            color: #5d5d5d!important;
+            font-weight: 900;
+            text-align:left;
+            width: 100%;
+            margin: 0px 20px;
+        }
+        .messages{
+            color: #5d5d5d;
+            text-align: left;
+            width: 100%;
+            margin: 0px 20px;
+        }
+    </style>
+{{> footer}}
