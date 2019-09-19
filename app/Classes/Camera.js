@@ -7,7 +7,6 @@ class Camera {
     
     //camera feed viewfinder on
     switch_on() {
-        console.log('IELAAAA');
         //get camera media stream and set on player <video>
         navigator.mediaDevices.getUserMedia({
             video: {width: 600, height: 600},

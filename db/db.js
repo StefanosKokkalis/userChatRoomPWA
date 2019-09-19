@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1312koufala!!',
+    password: '56eES9q9X5LgYxPKTCrvfs8Z',
     database: 'photomessageapp'
 });
 
@@ -14,7 +14,5 @@ connection.query('SELECT 1 + 1 AS solution', function(error, results, fields){
     //console.log('The solution is: ', results[0].solution);
     console.log("DB Connected");
 });
-
-
 
 module.exports = connection;

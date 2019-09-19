@@ -2,17 +2,9 @@
 
 
 <div class='container'>
+    
     {{#if isAuthenticated}}   
        <h2>You're already logged in</h2>
-<!--
-        <p style='color:white;'>Redirecting</p>
-        
-        <script>
-        setTimeout(function () {
-            window.location = "/profile";
-        }, 2000);
-        </script>
--->
     {{else}}
  
         <h2>{{title}}</h2>
@@ -50,4 +42,4 @@
           
         }
 </script>
-
+{{> footer}}

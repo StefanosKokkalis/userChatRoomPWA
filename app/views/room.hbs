@@ -4,7 +4,7 @@
     <div hidden id="userName">{{username}}</div>
     <div hidden id='nameColor'>{{nameColor}}</div>
     <div hidden id='msgColor'>{{msgColor}}</div>
-    <main class="p-2" style='margin-top:60px;'>
+    <main class="p-2" style='margin:65px 0px;'>
         <div id="messages" class="container-fluid">
             <div id="loader" class="text-center text-light" style="margin-top:10rem;">
                 <i class="fas fa-spinner fa-2x fa-pulse"></i>
@@ -44,9 +44,9 @@
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/Classes/Camera.js"></script>
-    <script src="/Classes/Message.js"></script>
-    <script src="/main.js"></script>
+    <script src="/classes/camera.js"></script>
+    <script src="/classes/message.js"></script>
+    <script src="/room.js"></script>
     
      <!-- Init App if Supported -->
     <script>
@@ -58,7 +58,7 @@
             var msgColor = $('#msgColor').text();
 //            console.log("username",username);
             
-            //call init() from main.js
+            //call init() from room.js
             _init(username, nameColor, msgColor);
             
             // Register SW if supported
@@ -77,14 +77,14 @@
     </script>
 
 {{else}}
-    <script>
-        window.location.replace('/login');
-    </script>
+    <!--
+        <script>
+            window.location.replace('/login');
+        </script>
+    -->
+    <div>NOT AUTHENTICATED</div>
 {{/if}}
     <style>
-        nav{
-/*            display:none !important;*/
-        }
         .names{
             font-weight: 900;
             text-align:left;

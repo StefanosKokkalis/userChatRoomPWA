@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 <head>
     <title>Photo Message</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,19 +49,26 @@
  <body class="bg-info">
      
     <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-      <a class="navbar-brand" href="/">
+      {{#if isAuthenticated}}
+        <a class="navbar-brand" href="/">
           <img src='../icons/icon-128x128.png' width='40' />
-      </a>
+        </a>
+      {{else}}
+        <a class="navbar-brand" href="/login">
+          <img src='../icons/icon-128x128.png' width='40' />
+        </a>
+      {{/if}}
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home</a>
-          </li>
+          
             {{#if isAuthenticated}}
+              <li class="nav-item active">
+                 <a class="nav-link" href="/">Room</a>
+              </li>
               <li class="nav-item">
                 <a class="nav-link" href="/profile">Profile</a>
               </li>
@@ -69,6 +76,8 @@
                 <a class="nav-link" href="/logout">Logout</a>
               </li>
             {{else}}
+              <li class="nav-item active">
+              </li>
               <li class="nav-item">
                 <a class="nav-link" href="/register">Register</a>
               </li>

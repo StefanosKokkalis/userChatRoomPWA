@@ -1,4 +1,6 @@
-// APP COMPONENTS
+/*****************/
+/******************/
+// SERVER COMPONENTS
 const express = require('express');
 const socketio = require('socket.io');
 const http = require('http');
@@ -10,6 +12,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const server = http.Server(app);
 //
+// CREATE PUSH SERVER
+const pushServer = require(`${__dirname}/../server/push_configuration.js`)
+//
 // AUTHENTICATION 
 // To make validator work we must use 5.3.1, a downgraded version of the installed default version.
 const db = require(`${__dirname}/../db/db.js`);
@@ -20,14 +25,19 @@ const MySQLStore = require('express-mysql-session') (session);
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+/*********************/
+/*****************/
 
 
+
+/*****************/
+/*********************/
 // INITIALIZE AUTH
 var user_obj = {};
 const options = {
     host: 'localhost',
     user: 'root',
-    password: '1312koufala!!',
+    password: '56eES9q9X5LgYxPKTCrvfs8Z',
     database: 'photomessageapp'
 }
 
@@ -39,7 +49,6 @@ app.use(session({
     secret: 'iowjcxz3ivjewqn',
     resave: false,
     saveUninitialized: true
-//    cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
 }));
 
 
@@ -47,10 +56,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req,res,next){
-    //Data passing to Profile HTML
     res.locals.isAuthenticated = req.isAuthenticated();
-//    res.locals.currentUser = req.user;
-//    console.log("currentUser", res.locals.currentUser);
+    // console.log("is authenticated: "+req.isAuthenticated());
     next();
 })
 
@@ -58,8 +65,6 @@ app.use(function(req,res,next){
 
 //Strategy for /login POST action
 passport.use(new LocalStrategy( function(username, password, done) {
-//    console.log(username);
-//    console.log(password);
     db.query('SELECT password FROM users WHERE username = ?', [username], (err, results, fields) => {
         if (err) {done(err)};
         
@@ -71,27 +76,31 @@ passport.use(new LocalStrategy( function(username, password, done) {
 
             bcrypt.compare(password, hash, function(err, response) {
                 if (response === true) {
+                    console.log(results);
                     return done(null, {user_id: results[0].id, userName: username});
                 } else {
-                    return done(null, 'GLITCH');
+                    return done(null, false);
                 }
             });
             }
     });
 }));
+/*********************/
+/***********************/
+
 
 //
 //CREATE WEB SOCKET SERVER
 const io = socketio(server);
-//
+
 // Init server messages from disk's file
-const messageData = fs.readFileSync(`${__dirname}/db.json`).toString();
+const messageData = fs.readFileSync(`${__dirname}/chat_history.json`).toString();
 const messages = messageData ? JSON.parse(messageData) : [];
-//
+
 // Listen for new socket client (connection)
 io.on('connection', (socket) => {
     console.log("New Client Connected");
-        
+            
     //Send all messages to connecting client
     socket.emit('all_messages', messages);
     
@@ -102,7 +111,7 @@ io.on('connection', (socket) => {
         messages.unshift(message);
         
         //Persist to disk
-        fs.writeFileSync(`${__dirname}/db.json`, JSON.stringify(messages));
+        fs.writeFileSync(`${__dirname}/chat_history.json`, JSON.stringify(messages));
         
         //broadcast new message to all connected clients
         socket.broadcast.emit('new_message', message);
@@ -123,7 +132,9 @@ app.use(expressValidator());
 
 
 
-// Routing
+// ROUTER
+/********************
+**********************/
 //
 // router rendering looks up for a views file
 // specify view AND partial folders and parse the engine to hbs.
@@ -132,10 +143,11 @@ hbs.registerPartials(`${__dirname}/../app/views/partials`);
 app.set('view engine', 'hbs');
 
 //AUTH: WHENEVER CLIENT ENTERS THE APP
-app.get('/',authenicationMiddleware(), function(req,res) {
-    console.log('user authenticated: ' + req.isAuthenticated());
+app.get('/', authenticationMiddleware(), function(req,res) {
     if(req.isAuthenticated() === true){
-        console.log("FUCKING TRUE");
+        
+         console.log("true lemeee");
+        
         db.query('SELECT * FROM profile_options WHERE user_id = ?', [req.session.passport.user.user_id], (error, results, fields) => {  
             if (error) throw error;
 
@@ -146,13 +158,13 @@ app.get('/',authenicationMiddleware(), function(req,res) {
                 msgColor: results[0].message_color
             });    
         });
-
+    }else{
+        console.log('false auth');
     }
-    
 });
 
 //AUTH: WHENEVER CLIENT ENTERS PROFILE
-app.get('/profile', authenicationMiddleware(), function(req, res, next) {
+app.get('/profile', authenticationMiddleware(), function(req, res, next) {
     console.log("user auth: " + req.isAuthenticated());
     if( req.isAuthenticated() === true ){
         console.log(req.session.passport.user);
@@ -177,8 +189,8 @@ app.get('/profile', authenicationMiddleware(), function(req, res, next) {
     }
 });
 
-app.post('/profile', authenicationMiddleware(), function(req, res, next) {
-    if( req.isAuthenticated() === true ){
+app.post('/profile', function(req, res, next) {
+//    if( req.isAuthenticated() === true ){
         var nameColor = req.body.nameColor;
         var msgColor = req.body.msgColor;
         var userId = req.session.passport.user.user_id;
@@ -190,7 +202,7 @@ app.post('/profile', authenicationMiddleware(), function(req, res, next) {
                 msgColor: msgColor
             });      
         });
-    }
+//    }
 });
 
 //AUTH: WHENEVER CLIENT ENTERS LOGIN
@@ -213,11 +225,12 @@ app.post('/login', passport.authenticate('local', {
 app.get('/logout', function(req, res){
     req.logout();
     req.session.destroy();
+    user_obj = {};
     res.redirect('/login');
 });
 
 //AUTH: WHENEVER CLIENT ENTERS REGISTRATION
-app.get('/register', function (req, res) {
+app.get('/register',  function (req, res) {
   res.render('register', {
       title: 'Registration',
       formVisible: 'visible'
@@ -281,6 +294,8 @@ app.post('/register',function (req, res) {
         });   
     }
 });
+/**********************
+************************/
 
 
 passport.serializeUser((user_id, done) => {
@@ -300,15 +315,17 @@ app.use('/modules',express.static(`${__dirname}/../node_modules`));
 
 
 //Determine if user is logged in
-function authenicationMiddleware() {
+function authenticationMiddleware() {
     return (req, res, next) => {
         if(req.isAuthenticated() === true){
+            console.log("authenticated!");
             return next();  
         } else {  
+            console.log("not authenticated");
             res.redirect('/login');
         }
     }
 }
 
 // Start Server
-server.listen( 8888, () => console.log('Photo Message running on localhost:8888'));
+server.listen( 8888, () => console.log('Photo Message running on 8888'));

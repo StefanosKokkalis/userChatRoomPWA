@@ -3,17 +3,74 @@
 <div class='container'>
     <h2>Welcome {{currentUser}}</h2>
 
-    <div>
+        <hr>
+
         <h4>Chat Options</h4>
         <form id='profileForm' method="POST" action='/profile'>
-            <label for='nameColor'>Name Color</label>
-            <input id='nameColor' name='nameColor'  class='form-control' value='{{nameColor}}'  type='color'>
-            <label for='msgColor'>Message Color</label>
-            <input id='msgColor' name='msgColor'  class='form-control' value='{{msgColor}}' type='color'>
+            <div class='form-group'>
+                <label for='nameColor'>Name Color</label>
+                <input id='nameColor' name='nameColor'  class='form-control' value='{{nameColor}}'  type='color'>
+            </div>
+
+            <div class='form-group'>
+                <label for='msgColor'>Message Color</label>
+                <input id='msgColor' name='msgColor'  class='form-control' value='{{msgColor}}' type='color'>
+            </div>
+
             <button type='submit' class='btn btn-light'>Save</button>
         </form>
 
-    </div>
+        <hr>
+
+        <h4>Push Notifications</h4>
+        <div id="subscribe" style="text-align: center;">
+          <p><i>Subscribe to receive Push Notifications</i></p>
+          <button onclick="subscribe()">Subscribe</button>
+        </div>
+        <div id="unsubscribe" class="hidden" style="text-align: center;">
+          <p><i>Unsubscribe from Push Notifications</i></p>
+          <button onclick="unsubscribe()">Unsubscribe</button>
+        </div>
 </div>
+<script src='/profile.js'></script>
 <script>
+     // Service Worker Registration
+    let swReg;
+
+    // Register Service Worker
+    navigator.serviceWorker.register('sw.js')
+    .then( registration => {
+
+          // Reference registration globally
+          swReg = registration;
+
+          // Check if a subscription exists, and if so, update the UI
+          swReg.pushManager.getSubscription().then( setSubscribedStatus );
+
+        // Log errors
+    }).catch( error => {
+        console.log(error);
+        toastr.error( null, "This App is not supported by your browser.", {timeout: 3000});
+    });
+
 </script>
+<style>
+button {
+    padding: 0.5rem 3rem;
+    font-size: 2rem;
+    background: #66DE93;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  #unsubscribe button {
+    background: #EB3F2F;
+  }
+  .hidden {
+    display: none;
+  }
+  input[type="color"] {
+    padding: 0 !important;
+  }
+</style>
+{{> footer}}
